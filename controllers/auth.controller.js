@@ -5,20 +5,39 @@ import asyncHandler from 'express-async-handler';
 
 // @desc    Authenticate an user
 // @route   POST /api/v1/auth/login
-// @access  Private
+// @access  Public
 export const loginUser = asyncHandler(async (req, res) => {
-    return res.status(200).json({
-        success: true,
-        statusCode: 200,
-        data: {},
-    });
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+        const isPasswordSame = await bcrypt.compare(password, user.password);
+
+        if (isPasswordSame) {
+            return res.status(200).json({
+                success: true,
+                statusCode: 200,
+                data: {
+                    _id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    token: generateToken(user._id),
+                },
+            });
+        }
+    }
+
+    res.status(400);
+    throw new Error('Invalid credentials');
 });
 
 // @desc    Register new user
 // @route   POST /api/v1/auth/register
-// @access  Private
+// @access  Public
 export const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
+
     if (!name?.trim() || !email?.trim() || !password?.trim()) {
         res.status(400);
         throw new Error('Please add all fields');
@@ -31,7 +50,7 @@ export const registerUser = asyncHandler(async (req, res) => {
         throw new Error('User already registered');
     }
 
-    const salt = await bcrypt.getSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = await User.create({
@@ -49,6 +68,7 @@ export const registerUser = asyncHandler(async (req, res) => {
                 _id: user.id,
                 name: user.name,
                 email: user.email,
+                token: generateToken(user._id),
             },
         });
     } else {
@@ -61,9 +81,21 @@ export const registerUser = asyncHandler(async (req, res) => {
 // @route   GET /api/v1/auth/me
 // @access  Private
 export const getMe = asyncHandler(async (req, res) => {
+    const { id: userId } = req.user;
+    const { _id, name, email } = await User.findById(userId);
     return res.status(200).json({
         success: true,
         statusCode: 200,
-        data: {},
+        data: {
+            _id,
+            name,
+            email,
+        },
     });
 });
+
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '7d',
+    });
+};
