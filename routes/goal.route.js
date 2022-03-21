@@ -8,7 +8,7 @@ import {
 
 const router = express.Router();
 
-router.get('/', findAllGoals).post(createGoal);
-router.get('/:goalId', updateGoal).post(deleteGoal);
+router.route('/').get(findAllGoals).post(createGoal);
+router.route('/:id').put(updateGoal).delete(deleteGoal);
 
 export default router;

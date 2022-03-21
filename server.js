@@ -1,10 +1,15 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import colors from 'colors';
+import { connectDB } from './configs/database.js';
 import express from 'express';
 import { errorHandler } from './middlewares/error.middleware.js';
 
 // routes
 import goalRoutes from './routes/goal.route.js';
+
+// connect to mongodb
+await connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
