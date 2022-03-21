@@ -7,6 +7,7 @@ import { errorHandler } from './middlewares/error.middleware.js';
 
 // routes
 import goalRoutes from './routes/goal.route.js';
+import authRoutes from './routes/auth.route.js';
 
 // connect to mongodb
 await connectDB();
@@ -19,6 +20,7 @@ app.use(express.json());
 
 // routes
 app.use('/api/v1/goals', goalRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 app.use(errorHandler);
 

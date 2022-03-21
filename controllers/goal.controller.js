@@ -17,7 +17,7 @@ export const findAllGoals = asyncHandler(async (req, res) => {
 // @route   POST /api/v1/goals
 // @access  Private
 export const createGoal = asyncHandler(async (req, res) => {
-    if (!req.body.text) {
+    if (!req.body.text?.trim()) {
         res.status(400);
         throw new Error('Please add a text value');
     }
