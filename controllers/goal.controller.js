@@ -47,7 +47,6 @@ export const createGoal = asyncHandler(async (req, res) => {
 // @access  Private
 export const updateGoal = asyncHandler(async (req, res) => {
     const { id: goalId } = req.params;
-    const { id: userId } = req.user;
     const { text } = req.body;
 
     const goal = await Goal.findById(goalId);
