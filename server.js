@@ -4,6 +4,7 @@ import colors from 'colors';
 import { connectDB } from './configs/database.js';
 import express from 'express';
 import { errorHandler } from './middlewares/error.middleware.js';
+import cors from 'cors';
 
 // routes
 import goalRoutes from './routes/goal.route.js';
@@ -15,6 +16,7 @@ await connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
