@@ -81,8 +81,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 // @route   GET /api/v1/auth/me
 // @access  Private
 export const getMe = asyncHandler(async (req, res) => {
-    const { id: userId } = req.user;
-    const { _id, name, email } = await User.findById(userId);
+    const { _id, name, email } = req.user;
     return res.status(200).json({
         success: true,
         statusCode: 200,
